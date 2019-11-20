@@ -27,7 +27,6 @@ const routes = [
         path: 'busses',
         name: 'disk-tools-busses',
         component: Busses,
-        
       },
     ]
   },
