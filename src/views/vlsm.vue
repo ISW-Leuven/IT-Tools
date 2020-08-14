@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h2>VLSM</h2>
+    <h2>VLSM Calculator</h2>
     
     <el-form :label-position="'top'" :model="form">
       <el-form-item label="Address block">

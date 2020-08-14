@@ -1,18 +1,17 @@
 <template>
   <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <h1>A list of handy tools for IT.</h1>
+    <ul>
+      <li><router-link :to="{ name: 'networktools-vlsm' }">VLSM Calculator</router-link></li>
+    </ul>
+    <p>
+      Please note this website is very early in development. Styling is not yet done (sorry).
+    </p>
   </div>
 </template>
 
 <script>
-// @ is an alias to /src
-import HelloWorld from '@/components/HelloWorld.vue'
-
 export default {
   name: 'Home',
-  components: {
-    HelloWorld
-  }
 }
 </script>

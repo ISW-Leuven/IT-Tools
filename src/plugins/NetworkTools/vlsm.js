@@ -4,7 +4,7 @@ let s1, s2, s3, s4, mask1, mask2, mask3, mask4, ipArray;
  * Create an array of x bits with the given default value
  */
 const createArrayWithSize = (size, value = 0) => {
-  return Array.apply(null, Array(size)).map(function () { return value; });
+  return Array.from({ length: size }, (x) => value);
 }
 
 const binaryToInt = (bin) => {
@@ -258,6 +258,28 @@ const calculateSubnets = (hosts, networkAddr, cidrMask, ipAddr) => {
       maskVar = maskVar - 1;  //drops the mask value by one for the next time through the loop.
     }
 
+    let networkAddress = ipAddr[0] + "." + ipAddr[1] + "." + ipAddr[2] + "." + ipAddr[3];
+    let networkAddrBin = [
+      intToEightBitBinaryArray(ipAddr[0]), intToEightBitBinaryArray(ipAddr[1]),
+      intToEightBitBinaryArray(ipAddr[2]), intToEightBitBinaryArray(ipAddr[3])
+    ];
+
+    console.log(networkAddress);
+
+    const completeAddr = completeAddrToArray(networkAddrBin);
+
+    subnets.push({
+      requestedSize: n,
+      allocatedSize: calculateMaxHostsInSubnet(mask),
+      networkAddress,
+      networkMask: mask,
+      subnetMask: calculateDecimalDotNetmask(mask),
+      firstUsable: getFirstUsableAddr(completeAddr),
+      lastUsable: getLastUsableAddr(completeAddr, mask),
+      broadcastAddr: getBroadcastAddr(completeAddr, mask)
+    });
+    // ....
+
     ipAddr[3] = ipAddr[3] + addnum;  //adds the value of the addnum variable to the fourth (decimal) octet of the IP address.
 
     //these next 3 while loops will "carry the 1" so to speak if an octet grows larger than 255.
@@ -280,26 +302,6 @@ const calculateSubnets = (hosts, networkAddr, cidrMask, ipAddr) => {
     if (ipAddr[0] > 255) {
       alert("Fatal Error: IP address is too large.\n\nIt may be because your Address Block is too small to handle the number of addresses required.");
     }
-
-
-    let networkAddress = ipAddr[0] + "." + ipAddr[1] + "." + ipAddr[2] + "." + ipAddr[3];
-    let networkAddrBin = [
-      intToEightBitBinaryArray(ipAddr[0]), intToEightBitBinaryArray(ipAddr[1]),
-      intToEightBitBinaryArray(ipAddr[2]), intToEightBitBinaryArray(ipAddr[3])
-    ];
-
-    const completeAddr = completeAddrToArray(networkAddrBin);
-
-    subnets.push({
-      requestedSize: n,
-      allocatedSize: calculateMaxHostsInSubnet(mask),
-      networkAddress,
-      networkMask: mask,
-      subnetMask: calculateDecimalDotNetmask(mask),
-      firstUsable: getFirstUsableAddr(completeAddr),
-      lastUsable: getLastUsableAddr(completeAddr, mask),
-      broadcastAddr: getBroadcastAddr(completeAddr, mask)
-    });
   }
 
   return subnets;
