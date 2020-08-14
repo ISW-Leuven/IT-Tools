@@ -1,25 +1,18 @@
 <template>
-  <div id="app" class="h-full">
-    <div class="flex h-full">
-      <navigation />
-
-      <main class="w-full">
-        <div class="container mx-auto">
-          <router-view />
-        </div>
-      </main>
+  <div id="app">
+    <div class="container">
+      <router-view />
     </div>
   </div>
 </template>
 
-<script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
-import navigation from '@/components/Navigation.vue';
+<script>
+import HelloWorld from './components/HelloWorld.vue'
 
-@Component({
+export default {
+  name: 'app',
   components: {
-    navigation,
-  },
-})
-export default class App extends Vue {}
+    HelloWorld
+  }
+}
 </script>
