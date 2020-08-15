@@ -20,6 +20,14 @@ const intToBinary = (dec) => {
 }
 
 /**
+ * 
+ * @param {int} num 
+ */
+const removeLeadingZeros = (num) => {
+  return parseInt(num, 10);
+}
+
+/**
  * Converts an integer to an eight bit binary array 
  */
 const intToEightBitBinaryArray = (dec) => {
@@ -51,7 +59,7 @@ const splitCidrNotation = (cidrAddress) => {
 /**
  * Splits the subnets in 4 arrays (1 array = an octet)
  * 
- * @param {array} octets 
+ * @param {Array} octets 
  */
 const calculateNetmaskAsArray = (addr, cidrMask) => {
   if (!Array.isArray(addr) || addr.length != 4)
@@ -199,6 +207,43 @@ const getBroadcastAddr = (ipAddr, mask) => {
 
 /**
  * 
+ * @param {Array} ipAddr 
+ */
+const addressFromArrayToString = (ipAddr) => {
+  if (!Array.isArray(ipAddr) || ipAddr.length != 4)
+    throw "You must provide an array with 4 octets";
+
+  return removeLeadingZeros(ipAddr[0]) + "." + removeLeadingZeros(ipAddr[1]) + "." + removeLeadingZeros(ipAddr[2]) + "." + removeLeadingZeros(ipAddr[3]);
+}
+
+
+const calculateDetails = (hosts, networkAddr, cidrMask, ipArray) => {
+  // Calculate max available addresses in network
+  const maxAddresses = Math.pow(2, (32 - cidrMask));
+
+  // Calculate needed space for the subnets
+  const requiredSpace = hosts.reduce((a, b) => a + b + 2, 0);
+
+  if (requiredSpace > maxAddresses) {
+    throw 'You require more addresses than there are available.';
+  }
+
+  // Calc addresses left
+  const addresesLeft = maxAddresses - requiredSpace;
+
+  // Calc percentage
+  const percentage = Math.round((requiredSpace / maxAddresses) * 100);
+
+  return {
+    maxAddresses,
+    requiredSpace,
+    addresesLeft,
+    percentage
+  }
+}
+
+/**
+ * 
  * @param {Array} hosts 
  * @param {Array} networkAddr 
  * @param {Array} cidrMask 
@@ -258,7 +303,7 @@ const calculateSubnets = (hosts, networkAddr, cidrMask, ipAddr) => {
       maskVar = maskVar - 1;  //drops the mask value by one for the next time through the loop.
     }
 
-    let networkAddress = ipAddr[0] + "." + ipAddr[1] + "." + ipAddr[2] + "." + ipAddr[3];
+    let networkAddress = addressFromArrayToString(ipAddr);
     let networkAddrBin = [
       intToEightBitBinaryArray(ipAddr[0]), intToEightBitBinaryArray(ipAddr[1]),
       intToEightBitBinaryArray(ipAddr[2]), intToEightBitBinaryArray(ipAddr[3])
@@ -335,15 +380,17 @@ const calculateVLSM = (addressBlock, hosts) => {
   // Calculate the actual network address of the address block
   const networkAddr = calculateNetworkAddress(ipArray, netmaskArray);
 
-  console.log(networkAddr);
+  //
+  const details = calculateDetails(hosts, networkAddr, cidrMask, ipArray);
 
   // MAKE THE SUBNETS!
   const subnets = calculateSubnets(hosts, networkAddr, cidrMask, ipArray);
 
   return {
-    networkAddress: networkAddr,
+    networkAddress: addressFromArrayToString(networkAddr),
     networkMask: cidrMask,
-    subnets: subnets,
+    subnets,
+    details
   };
 }
 
