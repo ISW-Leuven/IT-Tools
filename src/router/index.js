@@ -10,14 +10,22 @@ Vue.use(VueRouter)
     name: 'Home',
     component: Home
   },
+  /**
+   * Network Tools
+   */
   {
     path: '/vlsm',
     name: 'networktools-vlsm',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
     component: () => import(/* webpackChunkName: "vlsm" */ '../views/vlsm.vue')
-  }
+  },
+  /**
+   * Disk Tools
+   */
+  {
+    path: '/disk/properties',
+    name: 'disktools-properties',
+    component: () => import(/* webpackChunkName: "vlsm" */ '../views/DiskTools/DiskProperties.vue')
+  },
 ]
 
 const router = new VueRouter({

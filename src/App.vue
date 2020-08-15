@@ -1,5 +1,9 @@
 <template>
   <div id="app">
+    <el-menu class="el-menu-demo" mode="horizontal" :router="true">
+      <el-menu-item :index="{ name: 'Home' }">Home</el-menu-item>
+      <el-menu-item :index="{ name: 'networktools-vlsm' }">VLSM</el-menu-item>
+    </el-menu>
     <div class="container">
       <router-view />
     </div>
@@ -7,12 +11,7 @@
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
-
 export default {
-  name: 'app',
-  components: {
-    HelloWorld
-  }
+  name: 'app'
 }
 </script>
