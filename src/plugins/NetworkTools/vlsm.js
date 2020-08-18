@@ -222,17 +222,22 @@ const calculateDetails = (hosts, networkAddr, cidrMask, ipArray) => {
   const maxAddresses = Math.pow(2, (32 - cidrMask));
 
   // Calculate needed space for the subnets
-  const requiredSpace = hosts.reduce((a, b) => a + b + 2, 0);
+  const requiredSpace = hosts.reduce((a, b) => { return a + b.requestedSize + 2 }, 0);
 
   if (requiredSpace > maxAddresses) {
     throw 'You require more addresses than there are available.';
   }
 
+  // Calculate actual addresses used
+  const actualAddressesUsed = hosts.reduce((a, b) => {
+    return a + b.allocatedSize + 2;
+  }, 0);
+
   // Calc addresses left
-  const addresesLeft = maxAddresses - requiredSpace;
+  const addresesLeft = maxAddresses - actualAddressesUsed;
 
   // Calc percentage
-  const percentage = Math.round((requiredSpace / maxAddresses) * 100);
+  const percentage = Math.round((actualAddressesUsed / maxAddresses) * 100);
 
   return {
     maxAddresses,
@@ -318,8 +323,6 @@ const calculateSubnets = (hosts, networkAddr, cidrMask, ipAddr) => {
 
     ipAddr[3] = ipAddr[3] + addnum;  // adds the value of the addnum variable to the fourth (decimal) octet of the IP address.
 
-    console.log('=====')
-
     // these next 3 while loops will "carry the 1" so to speak if an octet grows larger than 255.
     while (ipAddr[3] > 255) {
       console.log(ipAddr);
@@ -339,8 +342,6 @@ const calculateSubnets = (hosts, networkAddr, cidrMask, ipAddr) => {
       ipAddr[0]++;
       ipAddr[1] = ipAddr[1] - 256;
     }
-
-    console.log(ipAddr)
 
     //this next if statment just provides protection against the first octet of the IP address going over 255. This situation is very unlikely to ever happen, but I put the statement in just in case.
     if (ipAddr[0] > 255) {
@@ -379,11 +380,11 @@ const calculateVLSM = (addressBlock, hosts) => {
   // Calculate the actual network address of the address block
   const networkAddr = calculateNetworkAddress(ipArray, netmaskArray);
 
-  //
-  const details = calculateDetails(hosts, networkAddr, cidrMask, ipArray);
-
   // MAKE THE SUBNETS!
   const subnets = calculateSubnets(hosts, networkAddr, cidrMask, ipArray);
+
+  // Calculate some details
+  const details = calculateDetails(subnets, networkAddr, cidrMask, ipArray);
 
   return {
     networkAddress: addressFromArrayToString(networkAddr),

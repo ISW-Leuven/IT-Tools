@@ -43,8 +43,8 @@
           <h3>Details about this address pool</h3>
           <ul>
             <li>Actual network address: {{ result.networkAddress + '/' + result.networkMask }}</li>
-            <li>Total addresses required: {{ result.details.requiredSpace }} <small>(with broadcast & network addresses)</small></li>
             <li>Total addresses available: {{ result.details.maxAddresses }}</li>
+            <li>Total addresses required: {{ result.details.requiredSpace }} <small>(with broadcast & network addresses)</small></li>
             <li>Total addresses left: {{ result.details.addresesLeft }}</li>
             <li>Total percentage used: {{ result.details.percentage }}%</li>
           </ul>
@@ -87,7 +87,7 @@ export default {
     return {
       form: {
         addressBlock: '216.16.217.0/24',
-        hosts: [55,31,19],
+        hosts: [55,31,19,15,11,4,2,2,2],
       },
       result: {
         subnets: [],
