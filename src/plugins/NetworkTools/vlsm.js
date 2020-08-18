@@ -1,4 +1,4 @@
-let s1, s2, s3, s4, mask1, mask2, mask3, mask4, ipArray;
+let s1, s2, s3, s4;
 
 /**
  * Create an array of x bits with the given default value
@@ -262,9 +262,7 @@ const calculateSubnets = (hosts, networkAddr, cidrMask, ipAddr) => {
     if (stopcheck == 0) {
       if (cidrMask > 24) {
         if (ipAddr[3] > compare1) {
-          stopcheck = 1;
-          alert("Your Address Block is not large enough to handle this many host addresses.");
-          break;
+          throw "Your Address Block is not large enough to handle this many host addresses.";
         }
       }
     } //end stopcheck if statement.
@@ -272,9 +270,7 @@ const calculateSubnets = (hosts, networkAddr, cidrMask, ipAddr) => {
     if (stopcheck == 0) {
       if (cidrMask > 16 && cidrMask < 25) {
         if (ipAddr[2] > compare2) {
-          stopcheck = 1;
-          alert("Your Address Block is not large enough to handle this many host addresses.");
-          break;
+          throw "Your Address Block is not large enough to handle this many host addresses.";
         }
       }
     } //end stopcheck if statement.
@@ -282,9 +278,7 @@ const calculateSubnets = (hosts, networkAddr, cidrMask, ipAddr) => {
     if (stopcheck == 0) {
       if (cidrMask > 8 && cidrMask < 17) {
         if (ipAddr[1] > compare3) {
-          stopcheck = 1;
-          alert("Your Address Block is not large enough to handle this many host addresses.");
-          break;
+          throw "Your Address Block is not large enough to handle this many host addresses.";
         }
       }
     } //end stopcheck if statement.
@@ -309,8 +303,6 @@ const calculateSubnets = (hosts, networkAddr, cidrMask, ipAddr) => {
       intToEightBitBinaryArray(ipAddr[2]), intToEightBitBinaryArray(ipAddr[3])
     ];
 
-    console.log(networkAddress);
-
     const completeAddr = completeAddrToArray(networkAddrBin);
 
     subnets.push({
@@ -323,17 +315,22 @@ const calculateSubnets = (hosts, networkAddr, cidrMask, ipAddr) => {
       lastUsable: getLastUsableAddr(completeAddr, mask),
       broadcastAddr: getBroadcastAddr(completeAddr, mask)
     });
-    // ....
 
-    ipAddr[3] = ipAddr[3] + addnum;  //adds the value of the addnum variable to the fourth (decimal) octet of the IP address.
+    ipAddr[3] = ipAddr[3] + addnum;  // adds the value of the addnum variable to the fourth (decimal) octet of the IP address.
 
-    //these next 3 while loops will "carry the 1" so to speak if an octet grows larger than 255.
+    console.log('=====')
+
+    // these next 3 while loops will "carry the 1" so to speak if an octet grows larger than 255.
     while (ipAddr[3] > 255) {
+      console.log(ipAddr);
+
       ipAddr[2]++;
       ipAddr[3] = ipAddr[3] - 256;
     }
 
     while (ipAddr[2] > 255) {
+      console.log(ipAddr);
+
       ipAddr[1]++;
       ipAddr[2] = ipAddr[2] - 256;
     }
@@ -343,9 +340,11 @@ const calculateSubnets = (hosts, networkAddr, cidrMask, ipAddr) => {
       ipAddr[1] = ipAddr[1] - 256;
     }
 
+    console.log(ipAddr)
+
     //this next if statment just provides protection against the first octet of the IP address going over 255. This situation is very unlikely to ever happen, but I put the statement in just in case.
     if (ipAddr[0] > 255) {
-      alert("Fatal Error: IP address is too large.\n\nIt may be because your Address Block is too small to handle the number of addresses required.");
+      throw "Fatal Error: IP address is too large. It may be because your Address Block is too small to handle the number of addresses required.";
     }
   }
 
@@ -372,7 +371,7 @@ const calculateVLSM = (addressBlock, hosts) => {
   const cidrMask = parseInt(splittedCidr[1]);
 
   // Split the address in to each octet
-  ipArray = cidrAddr.split('.');
+  const ipArray = cidrAddr.split('.').map(x => parseInt(x));
 
   // Calculates the netmask
   const netmaskArray = calculateNetmaskAsArray([s1, s2, s3, s4], cidrMask);

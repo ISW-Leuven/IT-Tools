@@ -86,8 +86,8 @@ export default {
   data () {
     return {
       form: {
-        addressBlock: '220.10.10.0/24',
-        hosts: [60,28],
+        addressBlock: '216.16.217.0/24',
+        hosts: [55,31,19],
       },
       result: {
         subnets: [],
